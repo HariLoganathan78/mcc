@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assignment Tracker | CampusBuddy</title>
+  <link rel="stylesheet" href="assignment-tracker.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;900&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+  /* Navbar Layout */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  background: #000;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+/* Left side: logo + name */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-logo {
+  height: 40px;
+  filter: brightness(0) invert(1);
+}
+.college-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Right side: nav links */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+.nav-links li a:hover {
+  color: #ffca28;
+}
+
+/* Hamburger (mobile only) */
+.hamburger {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 60px;
+    right: 40px;
+    background: #222;
+    flex-direction: column;
+    width: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.4s ease;
+  }
+
+  .nav-links.active {
+    max-height: 300px;
+    padding: 10px 0;
+  }
+
+  .nav-links li {
+    padding: 10px 20px;
+    text-align: right;
+  }
+
+  .nav-right {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+
+</style>
+
+</head>
+<body>
+  <div class="overlay">
+    <!-- Navbar -->
+    <nav class="navbar">
+  <div class="nav-left">
+    <img src="logo.png" alt="MCC Logo" class="nav-logo" />
+    <span class="college-name">Madras Christian College</span>
+  </div>
+
+  <div class="nav-right">
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index1.html">🏠 Home</a></li>
+      <li><a href="before-college.html">🎓 Before College</a></li>
+      <li><a href="after-college.html">📚 After College</a></li>
+      <li><a href="timetable.html">📅 Timetable</a></li>
+    </ul>
+  </div>
+  </nav>
+
+  <div class="tracker-container">
+    <h1>✅ Assignment Tracker</h1>
+
+    <!-- Add Form -->
+    <form id="taskForm">
+      <input type="text" id="title" placeholder="Assignment Title" required />
+      <input type="text" id="subject" placeholder="Subject" required />
+      <input type="date" id="dueDate" required />
+      <button type="submit">Add</button>
+    </form>
+
+    <!-- Filters -->
+    <div class="filters">
+      <select id="statusFilter">
+        <option value="all">🔄 Show All</option>
+        <option value="completed">✅ Completed</option>
+        <option value="pending">❗ Not Completed</option>
+      </select>
+
+      <select id="subjectFilter">
+        <option value="all">📚 All Subjects</option>
+      </select>
+    </div>
+
+    <!-- Assignment List -->
+    <ul id="taskList" class="task-list"></ul>
+  </div>
+
+  <!-- JS Files -->
+  <script>
+    const form = document.getElementById("taskForm");
+const list = document.getElementById("taskList");
+
+let tasks = JSON.parse(localStorage.getItem("assignments")) || [];
+
+renderTasks();
+checkReminders(); // show alerts if due today/tomorrow
+
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const title = document.getElementById("title").value;
+  const subject = document.getElementById("subject").value;
+  const dueDate = document.getElementById("dueDate").value;
+
+  if (title && subject && dueDate) {
+    tasks.push({ title, subject, dueDate, completed: false });
+    localStorage.setItem("assignments", JSON.stringify(tasks));
+    form.reset();
+    renderTasks();
+  }
+});
+
+function renderTasks() {
+  list.innerHTML = "";
+
+  const statusFilter = document.getElementById("statusFilter").value;
+  const subjectFilter = document.getElementById("subjectFilter").value;
+
+  const filtered = tasks.filter(task => {
+    const matchStatus =
+      statusFilter === "all" ||
+      (statusFilter === "completed" && task.completed) ||
+      (statusFilter === "pending" && !task.completed);
+    const matchSubject =
+      subjectFilter === "all" || task.subject === subjectFilter;
+    return matchStatus && matchSubject;
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<p style="text-align:center; color:gray;">No assignments match this filter.</p>`;
+    return;
+  }
+
+  filtered.forEach((task, index) => {
+    const item = document.createElement("li");
+    item.classList.add("task-item");
+
+    const info = document.createElement("div");
+    info.className = `task-info ${task.completed ? "completed" : ""}`;
+    info.innerHTML = `
+      <span><strong>${task.title}</strong> - ${task.subject}</span>
+      <span>Due: ${task.dueDate}</span>
+    `;
+
+    const actions = document.createElement("div");
+    actions.classList.add("task-actions");
+
+    const completeBtn = document.createElement("button");
+    completeBtn.innerText = task.completed ? "Undo" : "Done";
+    completeBtn.className = "complete-btn";
+    completeBtn.onclick = () => toggleComplete(index);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.innerText = "Delete";
+    deleteBtn.className = "delete-btn";
+    deleteBtn.onclick = () => deleteTask(index);
+
+    actions.appendChild(completeBtn);
+    actions.appendChild(deleteBtn);
+
+    item.appendChild(info);
+    item.appendChild(actions);
+    list.appendChild(item);
+  });
+
+  populateSubjectDropdown();
+}
+
+// ✅ Toggle task complete + Confetti
+function toggleComplete(index) {
+  const wasIncomplete = !tasks[index].completed;
+  tasks[index].completed = !tasks[index].completed;
+  localStorage.setItem("assignments", JSON.stringify(tasks));
+  renderTasks();
+  if (wasIncomplete) launchConfetti();
+}
+
+function deleteTask(index) {
+  tasks.splice(index, 1);
+  localStorage.setItem("assignments", JSON.stringify(tasks));
+  renderTasks();
+}
+
+// 🎉 Confetti celebration
+function launchConfetti() {
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 }
+  });
+}
+
+// 🔔 Reminders
+function checkReminders() {
+  const today = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
+
+  tasks.forEach(task => {
+    const due = new Date(task.dueDate);
+    if (!task.completed) {
+      if (isSameDate(today, due)) {
+        alert(`📌 Reminder: "${task.title}" is due TODAY!`);
+      } else if (isSameDate(tomorrow, due)) {
+        alert(`📌 Reminder: "${task.title}" is due TOMORROW!`);
+      }
+    }
+  });
+}
+
+function isSameDate(d1, d2) {
+  return (
+    d1.getDate() === d2.getDate() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getFullYear() === d2.getFullYear()
+  );
+}
+
+// 🎯 Filter dropdowns
+document.getElementById("statusFilter").addEventListener("change", renderTasks);
+document.getElementById("subjectFilter").addEventListener("change", renderTasks);
+
+// Auto-populate subject filter
+function populateSubjectDropdown() {
+  const dropdown = document.getElementById("subjectFilter");
+  const selected = dropdown.value;
+
+  const subjects = [...new Set(tasks.map(t => t.subject))];
+  dropdown.innerHTML = `<option value="all">📚 All Subjects</option>`;
+  subjects.forEach(sub => {
+    dropdown.innerHTML += `<option value="${sub}">${sub}</option>`;
+  });
+
+  dropdown.value = selected;
+}
+function checkReminders() {
+  const today = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
+
+  const todayTasks = [];
+  const tomorrowTasks = [];
+
+  tasks.forEach(task => {
+    const due = new Date(task.dueDate);
+    if (!task.completed) {
+      if (isSameDate(today, due)) todayTasks.push(task);
+      else if (isSameDate(tomorrow, due)) tomorrowTasks.push(task);
+    }
+  });
+
+  if (todayTasks.length > 0) {
+    const names = todayTasks.map(t => `• ${t.title} (${t.subject})`).join("\n");
+    alert(`📌 ALERT: Assignments due TODAY!\n\n${names}`);
+  }
+
+  if (tomorrowTasks.length > 0) {
+    const names = tomorrowTasks.map(t => `• ${t.title} (${t.subject})`).join("\n");
+    alert(`📅 Heads-up: Due TOMORROW!\n\n${names}`);
+  }
+}
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <div id="chatbot-wrapper">
+  <style>
+    #chatbot-wrapper .chatbot-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 280px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      overflow: hidden;
+      font-family: 'Nunito', sans-serif;
+      z-index: 9999;
+    }
+
+    #chatbot-wrapper .chat-header {
+      background: #2196f3;
+      color: white;
+      padding: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      user-select: none;
+    }
+
+    #chatbot-wrapper .chat-body {
+      display: none;
+      flex-direction: column;
+      padding: 10px;
+      max-height: 300px;
+      background: #fff;
+    }
+
+    #chatbot-wrapper .chat-messages {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    #chatbot-wrapper .chat-message {
+      padding: 8px 12px;
+      border-radius: 10px;
+      max-width: 85%;
+      word-wrap: break-word;
+    }
+
+    #chatbot-wrapper .user-msg {
+      background: #e1f5fe;
+      align-self: flex-end;
+      text-align: right;
+    }
+
+    #chatbot-wrapper .bot-msg {
+      background: #e8f5e9;
+      align-self: flex-start;
+    }
+
+    #chatbot-wrapper #chatInput {
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+      font-size: 14px;
+    }
+  </style>
+
+  <div class="chatbot-container" id="chatbotContainer">
+    <div class="chat-header" onclick="toggleChat()">🤖 Need Help? Chat</div>
+    <div class="chat-body" id="chatBody">
+      <div class="chat-messages" id="chatMessages"></div>
+      <input
+        type="text"
+        id="chatInput"
+        placeholder="Ask about college..."
+        onkeydown="handleChatKey(event)"
+      />
+    </div>
+  </div>
+
+  <script>
+    function toggleChat() {
+      const chatBody = document.getElementById("chatBody");
+      chatBody.style.display = chatBody.style.display === "flex" ? "none" : "flex";
+    }
+
+    function handleChatKey(e) {
+      if (e.key === "Enter") {
+        const input = document.getElementById("chatInput");
+        const msg = input.value.trim();
+        if (msg) {
+          addChatMessage("user", msg);
+          input.value = "";
+
+          setTimeout(() => {
+            const botReply = getBotResponse(msg);
+            addChatMessage("bot", botReply);
+          }, 500);
+        }
+      }
+    }
+
+    function addChatMessage(sender, text) {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `chat-message ${sender === "user" ? "user-msg" : "bot-msg"}`;
+      msgDiv.innerText = text;
+
+      const chatMessages = document.getElementById("chatMessages");
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function getBotResponse(msg) {
+      const m = msg.toLowerCase();
+
+      if (m.includes("hello") || m.includes("hi")) return "Hi! How can I assist you today?";
+      if (m.includes("admission")) return "Admissions usually start in April–June. Check the 'Before College' section.";
+      if (m.includes("cutoff")) return "Use the eligibility checker to find which departments match your cutoff.";
+      if (m.includes("departments")) return "MCC offers B.Sc, B.Com, BBA, BA, M.Sc, and more!";
+      if (m.includes("location") || m.includes("where")) return "Madras Christian College is located in Tambaram, Chennai.";
+      if (m.includes("hostel")) return "Yes! Separate hostels are available for boys and girls.";
+      if (m.includes("placement")) return "Visit the 'After College' > Placement section for placement stats and training.";
+      if (m.includes("library")) return "MCC has a well-stocked central library with digital access.";
+      if (m.includes("contact")) return "You can contact the MCC office via the 'Contact' section on our site.";
+
+      return "I'm here to help with anything related to MCC — try asking about admission, courses, or cutoff!";
+    }
+
+    // Auto-close chatbot on outside click
+    document.addEventListener("click", function (e) {
+      const container = document.getElementById("chatbotContainer");
+      const chatBody = document.getElementById("chatBody");
+      if (
+        chatBody.style.display === "flex" &&
+        !container.contains(e.target)
+      ) {
+        chatBody.style.display = "none";
+      }
+    });
+  </script>
+</div>
+
+<!-- Circle Cursor -->
+<div id="circleCursor" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid #ffca28;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+  box-shadow: 0 0 10px #ffca28;
+"></div>
+
+<style>
+  body {
+    cursor: none;
+  }
+</style>
+
+<script>
+  const cursor = document.getElementById("circleCursor");
+  let mouseX = 0, mouseY = 0;
+  let currentX = 0, currentY = 0;
+
+  document.addEventListener("mousemove", e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function animateCursor() {
+    currentX += (mouseX - currentX) * 0.15;
+    currentY += (mouseY - currentY) * 0.15;
+    cursor.style.left = currentX + "px";
+    cursor.style.top = currentY + "px";
+    requestAnimationFrame(animateCursor);
+  }
+
+  animateCursor();
+</script>
+
+<script>
+  function toggleMenu() {
+    const nav = document.getElementById("navLinks");
+    nav.classList.toggle("active");
+  }
+
+  // Auto-close when a nav link is clicked
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".nav-links a").forEach(link => {
+      link.addEventListener("click", () => {
+        document.getElementById("navLinks").classList.remove("active");
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

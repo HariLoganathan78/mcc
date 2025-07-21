@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Timetable Generator | CampusBuddy</title>
+  <link rel="stylesheet" href="timetable.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;900&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+  /* Navbar Layout */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  background: #000;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+/* Left side: logo + name */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-logo {
+  height: 40px;
+  filter: brightness(0) invert(1);
+}
+.college-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Right side: nav links */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+.nav-links li a:hover {
+  color: #ffca28;
+}
+
+/* Hamburger (mobile only) */
+.hamburger {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 60px;
+    right: 40px;
+    background: #222;
+    flex-direction: column;
+    width: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.4s ease;
+  }
+
+  .nav-links.active {
+    max-height: 300px;
+    padding: 10px 0;
+  }
+
+  .nav-links li {
+    padding: 10px 20px;
+    text-align: right;
+  }
+
+  .nav-right {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+
+</style>
+
+</head>
+<body>
+  <div class="overlay">
+    <!-- Navbar -->
+    <nav class="navbar">
+  <div class="nav-left">
+    <img src="logo.png" alt="MCC Logo" class="nav-logo" />
+    <span class="college-name">Madras Christian College</span>
+  </div>
+
+  <div class="nav-right">
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index1.html">🏠 Home</a></li>
+      <li><a href="before-college.html">🎓 Before College</a></li>
+      <li><a href="after-college.html">📚 After College</a></li>
+      <li><a href="community.html">🤝 Community</a></li>
+    </ul>
+  </div>
+</nav>
+
+  <div class="timetable-container">
+    <h1>📅 Weekly Timetable</h1>
+
+    <!-- Input Form -->
+    <form id="entryForm">
+      <select id="day" required>
+        <option value="">Select Day</option>
+        <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+        <option>Thursday</option><option>Friday</option><option>Saturday</option>
+      </select>
+      <input type="text" id="time" placeholder="Time (e.g., 9–10 AM)" required />
+      <input type="text" id="subject" placeholder="Subject (e.g., Maths)" required />
+      <button type="submit">Add</button>
+      <button type="button" id="clearBtn">Clear All</button>
+      <button type="button" id="downloadBtn">Download PDF</button>
+    </form>
+
+    <!-- Classic Table -->
+    <div class="table-wrap">
+      <table id="timetable">
+        <thead>
+          <tr><th>Day</th><th>Time</th><th>Subject</th><th>Action</th></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Weekly Grid Layout -->
+    <div id="gridView" class="grid-view">
+      <h2>🗓️ Weekly Grid View</h2>
+      <div class="grid-table" id="weeklyGrid"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    const form = document.getElementById('entryForm');
+const tableBody = document.getElementById('tableBody');
+const clearBtn = document.getElementById('clearBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const weeklyGrid = document.getElementById('weeklyGrid');
+
+let timetable = JSON.parse(localStorage.getItem("timetable")) || [];
+
+renderTable();
+renderGrid();
+
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+  const day = document.getElementById('day').value;
+  const time = document.getElementById('time').value;
+  const subject = document.getElementById('subject').value;
+
+  if (day && time && subject) {
+    timetable.push({ day, time, subject });
+    localStorage.setItem("timetable", JSON.stringify(timetable));
+    renderTable();
+    renderGrid();
+    form.reset();
+  }
+});
+
+function renderTable() {
+  tableBody.innerHTML = "";
+  timetable.forEach((entry, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${entry.day}</td>
+      <td>${entry.time}</td>
+      <td>${entry.subject}</td>
+      <td><span class="delete-btn" onclick="deleteRow(${index})">✖</span></td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+function renderGrid() {
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const timeSlots = [...new Set(timetable.map(entry => entry.time))].sort();
+  weeklyGrid.innerHTML = "";
+
+  // Header row
+  weeklyGrid.innerHTML += `<div class="header">Time</div>`;
+  days.forEach(day => {
+    weeklyGrid.innerHTML += `<div class="header">${day}</div>`;
+  });
+
+  // Time slot rows
+  timeSlots.forEach(time => {
+    weeklyGrid.innerHTML += `<div class="header">${time}</div>`;
+    days.forEach(day => {
+      const subject = timetable.find(entry => entry.day === day && entry.time === time);
+      weeklyGrid.innerHTML += `<div>${subject ? subject.subject : ""}</div>`;
+    });
+  });
+}
+
+function deleteRow(index) {
+  timetable.splice(index, 1);
+  localStorage.setItem("timetable", JSON.stringify(timetable));
+  renderTable();
+  renderGrid();
+}
+
+clearBtn.addEventListener('click', () => {
+  if (confirm("Clear the entire timetable?")) {
+    localStorage.removeItem("timetable");
+    timetable = [];
+    renderTable();
+    renderGrid();
+  }
+});
+
+// PDF Download
+downloadBtn.addEventListener('click', () => {
+  const element = document.getElementById("gridView");
+  html2pdf().from(element).save("Weekly_Timetable.pdf");
+});
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <div id="chatbot-wrapper">
+  <style>
+    #chatbot-wrapper .chatbot-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 280px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      overflow: hidden;
+      font-family: 'Nunito', sans-serif;
+      z-index: 9999;
+    }
+
+    #chatbot-wrapper .chat-header {
+      background: #2196f3;
+      color: white;
+      padding: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      user-select: none;
+    }
+
+    #chatbot-wrapper .chat-body {
+      display: none;
+      flex-direction: column;
+      padding: 10px;
+      max-height: 300px;
+      background: #fff;
+    }
+
+    #chatbot-wrapper .chat-messages {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    #chatbot-wrapper .chat-message {
+      padding: 8px 12px;
+      border-radius: 10px;
+      max-width: 85%;
+      word-wrap: break-word;
+    }
+
+    #chatbot-wrapper .user-msg {
+      background: #e1f5fe;
+      align-self: flex-end;
+      text-align: right;
+    }
+
+    #chatbot-wrapper .bot-msg {
+      background: #e8f5e9;
+      align-self: flex-start;
+    }
+
+    #chatbot-wrapper #chatInput {
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+      font-size: 14px;
+    }
+  </style>
+
+  <div class="chatbot-container" id="chatbotContainer">
+    <div class="chat-header" onclick="toggleChat()">🤖 Need Help? Chat</div>
+    <div class="chat-body" id="chatBody">
+      <div class="chat-messages" id="chatMessages"></div>
+      <input
+        type="text"
+        id="chatInput"
+        placeholder="Ask about college..."
+        onkeydown="handleChatKey(event)"
+      />
+    </div>
+  </div>
+
+  <script>
+    function toggleChat() {
+      const chatBody = document.getElementById("chatBody");
+      chatBody.style.display = chatBody.style.display === "flex" ? "none" : "flex";
+    }
+
+    function handleChatKey(e) {
+      if (e.key === "Enter") {
+        const input = document.getElementById("chatInput");
+        const msg = input.value.trim();
+        if (msg) {
+          addChatMessage("user", msg);
+          input.value = "";
+
+          setTimeout(() => {
+            const botReply = getBotResponse(msg);
+            addChatMessage("bot", botReply);
+          }, 500);
+        }
+      }
+    }
+
+    function addChatMessage(sender, text) {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `chat-message ${sender === "user" ? "user-msg" : "bot-msg"}`;
+      msgDiv.innerText = text;
+
+      const chatMessages = document.getElementById("chatMessages");
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function getBotResponse(msg) {
+      const m = msg.toLowerCase();
+
+      if (m.includes("hello") || m.includes("hi")) return "Hi! How can I assist you today?";
+      if (m.includes("admission")) return "Admissions usually start in April–June. Check the 'Before College' section.";
+      if (m.includes("cutoff")) return "Use the eligibility checker to find which departments match your cutoff.";
+      if (m.includes("departments")) return "MCC offers B.Sc, B.Com, BBA, BA, M.Sc, and more!";
+      if (m.includes("location") || m.includes("where")) return "Madras Christian College is located in Tambaram, Chennai.";
+      if (m.includes("hostel")) return "Yes! Separate hostels are available for boys and girls.";
+      if (m.includes("placement")) return "Visit the 'After College' > Placement section for placement stats and training.";
+      if (m.includes("library")) return "MCC has a well-stocked central library with digital access.";
+      if (m.includes("contact")) return "You can contact the MCC office via the 'Contact' section on our site.";
+
+      return "I'm here to help with anything related to MCC — try asking about admission, courses, or cutoff!";
+    }
+
+    // Auto-close chatbot on outside click
+    document.addEventListener("click", function (e) {
+      const container = document.getElementById("chatbotContainer");
+      const chatBody = document.getElementById("chatBody");
+      if (
+        chatBody.style.display === "flex" &&
+        !container.contains(e.target)
+      ) {
+        chatBody.style.display = "none";
+      }
+    });
+  </script>
+</div>
+
+<!-- Circle Cursor -->
+<div id="circleCursor" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid #ffca28;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+  box-shadow: 0 0 10px #ffca28;
+"></div>
+
+<style>
+  body {
+    cursor: none;
+  }
+</style>
+
+<script>
+  const cursor = document.getElementById("circleCursor");
+  let mouseX = 0, mouseY = 0;
+  let currentX = 0, currentY = 0;
+
+  document.addEventListener("mousemove", e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function animateCursor() {
+    currentX += (mouseX - currentX) * 0.15;
+    currentY += (mouseY - currentY) * 0.15;
+    cursor.style.left = currentX + "px";
+    cursor.style.top = currentY + "px";
+    requestAnimationFrame(animateCursor);
+  }
+
+  animateCursor();
+</script>
+
+<script>
+  function toggleMenu() {
+    const nav = document.getElementById("navLinks");
+    nav.classList.toggle("active");
+  }
+
+  // Auto-close when a nav link is clicked
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".nav-links a").forEach(link => {
+      link.addEventListener("click", () => {
+        document.getElementById("navLinks").classList.remove("active");
+      });
+    });
+  });
+</script>
+
+
+</body>
+</html>

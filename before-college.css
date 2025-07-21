@@ -1,0 +1,275 @@
+/* Base Reset and Fonts */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(to bottom right, #f7f8fa, #edf0f3);
+  color: #222;
+  scroll-behavior: smooth;
+}
+
+/* Navbar */
+.navbar {
+  background: rgba(33, 33, 33, 0.75);
+  backdrop-filter: blur(8px);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.nav-logo {
+  height: 45px;
+  filter: brightness(0) invert(1);
+}
+
+.college-name {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #ffca28;
+}
+
+/* Main Layout */
+.container {
+  padding: 60px 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+/* Section Boxes */
+.box {
+  background: white;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  margin-bottom: 40px;
+  transition: transform 0.3s ease;
+}
+
+.box:hover {
+  transform: translateY(-3px);
+}
+
+.box h2 {
+  margin-bottom: 25px;
+  color: #333;
+  font-size: 24px;
+  border-left: 5px solid #ffca28;
+  padding-left: 12px;
+}
+
+/* Departments Grid */
+.departments {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.dept {
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.dept:hover {
+  background: #fffce8;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.dept h3 {
+  color: #444;
+  font-size: 17px;
+  margin-bottom: 10px;
+}
+
+.dept p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Admission Steps */
+.admission-steps {
+  padding-left: 20px;
+  line-height: 1.8;
+  font-size: 15px;
+  color: #333;
+}
+
+.admission-steps li {
+  margin-bottom: 10px;
+}
+
+/* Eligibility Form */
+.eligibility-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.eligibility-form input {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 200px;
+  max-width: 100%;
+}
+
+.eligibility-form button {
+  padding: 10px 20px;
+  background: #ffca28;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  width: fit-content;
+  transition: background 0.3s ease;
+}
+
+.eligibility-form button:hover {
+  background: #ffc107;
+}
+
+#eligible-depts {
+  margin-top: 15px;
+  font-size: 15px;
+}
+
+#eligible-depts ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+#eligible-depts li {
+  line-height: 1.5;
+}
+
+/* FAQ Section */
+.faq details {
+  margin-bottom: 15px;
+  background: #fdfdfd;
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: background 0.3s ease;
+}
+
+.faq details:hover {
+  background: #fffde7;
+}
+
+.faq summary {
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+}
+
+.faq p {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #444;
+}
+
+.faq a {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 20px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 8px 0;
+    font-size: 16px;
+  }
+
+  .hero-section h1 {
+    font-size: 32px;
+    text-align: center;
+  }
+
+  .hero-section p {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .carousel-wrapper {
+    height: 220px;
+  }
+
+  .carousel-track img {
+    height: 180px;
+  }
+
+  .scroll-heading {
+    font-size: 24px;
+    margin: 40px 0 20px;
+  }
+
+  #chatbot-wrapper .chatbot-container {
+    bottom: 10px;
+    right: 10px;
+    width: 90%;
+    max-width: 320px;
+  }
+
+  #chatbot-wrapper #chatInput {
+    font-size: 13px;
+  }
+
+  .circle-cursor {
+    display: none; /* optional for better mobile UX */
+  }
+}

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>After College | CampusBuddy - MCC</title>
+  <link rel="stylesheet" href="after-college.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;900&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+  /* Navbar Layout */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  background: #000;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+/* Left side: logo + name */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-logo {
+  height: 40px;
+  filter: brightness(0) invert(1);
+}
+.college-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Right side: nav links */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+.nav-links li a:hover {
+  color: #ffca28;
+}
+
+/* Hamburger (mobile only) */
+.hamburger {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 60px;
+    right: 40px;
+    background: #222;
+    flex-direction: column;
+    width: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.4s ease;
+  }
+
+  .nav-links.active {
+    max-height: 300px;
+    padding: 10px 0;
+  }
+
+  .nav-links li {
+    padding: 10px 20px;
+    text-align: right;
+  }
+
+  .nav-right {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+
+</style>
+
+</head>
+<body>
+  <div class="overlay">
+    <!-- Navbar -->
+    <nav class="navbar">
+  <div class="nav-left">
+    <img src="logo.png" alt="MCC Logo" class="nav-logo" />
+    <span class="college-name">Madras Christian College</span>
+  </div>
+
+  <div class="nav-right">
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="index1.html">🏠 Home</a></li>
+        <li><a href="before-college.html">🎓 Before College</a></li>
+        <li><a href="community.html">🤝 Community</a></li>
+      </ul>
+  </div>
+  </nav>
+
+    <main class="container">
+
+      <!-- Orientation Module -->
+      <section class="box">
+        <h2>📘 Orientation Module</h2>
+        <p>Explore key concepts to get started:</p>
+        <div class="accordion">
+          <details>
+            <summary>💠 CGPA, GPA & Credit Systems</summary>
+            <p>GPA is the average of grade points for one semester. CGPA is the cumulative GPA of all semesters. Credit indicates the weight of a subject.</p>
+          </details>
+          <details>
+            <summary>📆 Academic Calendar & Attendance</summary>
+            <p>Semester schedules are posted on the college portal. Minimum 75% attendance is required for exam eligibility.</p>
+          </details>
+          <details>
+            <summary>🔗 College Rules, ID & Portal</summary>
+            <p>Students must wear ID cards, follow dress code, and log in to the student portal regularly for updates, marks, and fees.</p>
+          </details>
+        </div>
+      </section>
+
+      <!-- Time Management Tools -->
+      <section class="box time-tools">
+        <h2>🕒 Time Management Tools</h2>
+        <p>Stay on top of your schedule and assignments:</p>
+        <div class="tool-grid">
+          <div class="tool-card">
+            <h3>📅 Timetable Generator</h3>
+            <p>Create your weekly class schedule and download it as a PDF.</p>
+            <a href="timetable.html" class="tool-button">Open Timetable</a>
+          </div>
+          <div class="tool-card">
+            <h3>✅ Assignment Tracker</h3>
+            <p>Track your homework, projects, and get reminders before the due date.</p>
+            <a href="assignment-tracker.html" class="tool-button">Track Assignments</a>
+          </div>
+          <div class="tool-card">
+            <h3>⏰ Daily Alerts</h3>
+            <p>Get class alerts, exam dates, and important academic notifications.</p>
+            <a href="daily-alerts.html" class="tool-button">Set Alerts</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Campus Map -->
+      <section class="box">
+        <h2>🗺️ Campus Map & Contacts</h2>
+        <p>Navigate through important campus locations:</p>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3913.5513053255925!2d80.11988171521923!3d12.921948691269904!2m3!
+          1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a525d235e4dfa0f%3A0x1c2e3f0f302ec5aa!2sMadras%20Christian%20College!
+          5e0!3m2!1sen!2sin!4v1690026000000"
+          width="100%" height="300" style="border:0; border-radius:10px;" allowfullscreen="" loading="lazy"
+        ></iframe>
+        <p><strong>Address:</strong> Tambaram, Chennai – 600059, Tamil Nadu, India</p>
+        <p><strong>Admission Office:</strong> ☎️ 044‑22390675 / 22396772</p>
+        <a href="https://goo.gl/maps/zAiL93qEmU82" class="button" target="_blank">🌍 Open in Google Maps</a>
+      </section>
+
+      <!-- Academic Support -->
+      <section class="box">
+        <h2>📚 Academic Support</h2>
+        <ul class="list">
+          <li>📄 Download Syllabus PDFs</li>
+          <li>📘 Previous Year Question Papers</li>
+          <li>🎥 YouTube Video Lectures</li>
+        </ul>
+        <a href="#" class="button">Access Resources</a>
+      </section>
+
+      <!-- Doubt Forum -->
+      <section class="box">
+        <h2>💬 Doubt Discussion Forum</h2>
+        <p>Ask questions and get help from seniors & peers:</p>
+        <ul class="list">
+          <li>🔍 Search by Subject</li>
+          <li>📝 Post Your Questions</li>
+          <li>👍 Upvote Best Answers</li>
+        </ul>
+        <a href="#" class="button">Visit Forum</a>
+      </section>
+
+    </main>
+  </div>
+  <div id="chatbot-wrapper">
+  <style>
+    #chatbot-wrapper .chatbot-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 280px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      overflow: hidden;
+      font-family: 'Nunito', sans-serif;
+      z-index: 9999;
+    }
+
+    #chatbot-wrapper .chat-header {
+      background: #2196f3;
+      color: white;
+      padding: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      user-select: none;
+    }
+
+    #chatbot-wrapper .chat-body {
+      display: none;
+      flex-direction: column;
+      padding: 10px;
+      max-height: 300px;
+      background: #fff;
+    }
+
+    #chatbot-wrapper .chat-messages {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    #chatbot-wrapper .chat-message {
+      padding: 8px 12px;
+      border-radius: 10px;
+      max-width: 85%;
+      word-wrap: break-word;
+    }
+
+    #chatbot-wrapper .user-msg {
+      background: #e1f5fe;
+      align-self: flex-end;
+      text-align: right;
+    }
+
+    #chatbot-wrapper .bot-msg {
+      background: #e8f5e9;
+      align-self: flex-start;
+    }
+
+    #chatbot-wrapper #chatInput {
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+      font-size: 14px;
+    }
+  </style>
+
+  <div class="chatbot-container" id="chatbotContainer">
+    <div class="chat-header" onclick="toggleChat()">🤖 Need Help? Chat</div>
+    <div class="chat-body" id="chatBody">
+      <div class="chat-messages" id="chatMessages"></div>
+      <input
+        type="text"
+        id="chatInput"
+        placeholder="Ask about college..."
+        onkeydown="handleChatKey(event)"
+      />
+    </div>
+  </div>
+
+  <script>
+    function toggleChat() {
+      const chatBody = document.getElementById("chatBody");
+      chatBody.style.display = chatBody.style.display === "flex" ? "none" : "flex";
+    }
+
+    function handleChatKey(e) {
+      if (e.key === "Enter") {
+        const input = document.getElementById("chatInput");
+        const msg = input.value.trim();
+        if (msg) {
+          addChatMessage("user", msg);
+          input.value = "";
+
+          setTimeout(() => {
+            const botReply = getBotResponse(msg);
+            addChatMessage("bot", botReply);
+          }, 500);
+        }
+      }
+    }
+
+    function addChatMessage(sender, text) {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `chat-message ${sender === "user" ? "user-msg" : "bot-msg"}`;
+      msgDiv.innerText = text;
+
+      const chatMessages = document.getElementById("chatMessages");
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function getBotResponse(msg) {
+      const m = msg.toLowerCase();
+
+      if (m.includes("hello") || m.includes("hi")) return "Hi! How can I assist you today?";
+      if (m.includes("admission")) return "Admissions usually start in April–June. Check the 'Before College' section.";
+      if (m.includes("cutoff")) return "Use the eligibility checker to find which departments match your cutoff.";
+      if (m.includes("departments")) return "MCC offers B.Sc, B.Com, BBA, BA, M.Sc, and more!";
+      if (m.includes("location") || m.includes("where")) return "Madras Christian College is located in Tambaram, Chennai.";
+      if (m.includes("hostel")) return "Yes! Separate hostels are available for boys and girls.";
+      if (m.includes("placement")) return "Visit the 'After College' > Placement section for placement stats and training.";
+      if (m.includes("library")) return "MCC has a well-stocked central library with digital access.";
+      if (m.includes("contact")) return "You can contact the MCC office via the 'Contact' section on our site.";
+
+      return "I'm here to help with anything related to MCC — try asking about admission, courses, or cutoff!";
+    }
+
+    // Auto-close chatbot on outside click
+    document.addEventListener("click", function (e) {
+      const container = document.getElementById("chatbotContainer");
+      const chatBody = document.getElementById("chatBody");
+      if (
+        chatBody.style.display === "flex" &&
+        !container.contains(e.target)
+      ) {
+        chatBody.style.display = "none";
+      }
+    });
+  </script>
+</div>
+
+<!-- Circle Cursor -->
+<div id="circleCursor" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid #ffca28;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+  box-shadow: 0 0 10px #ffca28;
+"></div>
+
+<style>
+  body {
+    cursor: none;
+  }
+</style>
+
+<script>
+  const cursor = document.getElementById("circleCursor");
+  let mouseX = 0, mouseY = 0;
+  let currentX = 0, currentY = 0;
+
+  document.addEventListener("mousemove", e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function animateCursor() {
+    currentX += (mouseX - currentX) * 0.15;
+    currentY += (mouseY - currentY) * 0.15;
+    cursor.style.left = currentX + "px";
+    cursor.style.top = currentY + "px";
+    requestAnimationFrame(animateCursor);
+  }
+
+  animateCursor();
+</script>
+
+<script>
+  function toggleMenu() {
+    const nav = document.getElementById("navLinks");
+    nav.classList.toggle("active");
+  }
+
+  // Auto-close when a nav link is clicked
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".nav-links a").forEach(link => {
+      link.addEventListener("click", () => {
+        document.getElementById("navLinks").classList.remove("active");
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
